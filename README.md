@@ -1,90 +1,192 @@
-🚨 Risk Alert Classifier — Machine Learning Project
+🚨 Risk Alert Classifier
 
+<p align="center">
+  <img src="assets/hero_risk_alert.png" alt="Risk Alert Classifier" width="100%">
+</p>
 
+<p align="center">
+  <b>Credit Risk Classification using Machine Learning</b><br>
+  Predicting high-risk customers while prioritizing the reduction of False Negatives.
+</p>
 
-A machine learning classification project for identifying customer credit-risk status, with a strong focus on reducing False Negatives.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/Pandas-Data%20Processing-150458?logo=pandas&logoColor=white">
+  <img src="https://img.shields.io/badge/Scikit--learn-ML-F7931E?logo=scikit-learn&logoColor=white">
+  <img src="https://img.shields.io/badge/Imbalanced--learn-Class%20Balancing-2E8B57">
+  <img src="https://img.shields.io/badge/Jupyter-Notebook-F37626?logo=jupyter&logoColor=white">
+</p>
 
+📌 Table of Contents
 
+Overview
 
+Business Problem
 
+Project Workflow
 
+Dataset
 
+Data Preprocessing
+
+Class Imbalance Handling
+
+Machine Learning Models
+
+Hyperparameter Tuning
+
+Model Evaluation
+
+Final Results
+
+Business Recommendation
+
+Project Structure
+
+Installation & Usage
+
+Key Learnings
+
+Future Improvements
+
+🎯 Overview
+
+Risk Alert Classifier is a supervised machine learning project that classifies customers according to their credit-risk status.
+
+The project starts with customer financial and behavioral information and builds a complete ML pipeline:
+
+Data → Preprocessing → Class Balancing → Model Training → Hyperparameter Tuning → Evaluation → Business-Oriented Model Selection
+
+The notebook compares four final models:
+
+Logistic Regression
+
+Decision Tree
+
+Random Forest
+
+Tuned Random Forest
+
+The most important business metric is False Negatives, because a False Negative represents a high-risk customer incorrectly classified as low-risk.
+
+💼 Business Problem
+
+In credit-risk classification, not all prediction errors have the same cost.
+
+A False Negative occurs when:
+
+A genuinely high-risk customer is predicted as low-risk.
+
+This can increase financial exposure and credit risk.
+
+Therefore, this project does not select a model using accuracy alone. The final model is selected according to the business requirement of minimizing False Negatives.
 
 🎬 Project Workflow
 
+<p align="center">
+  <img src="assets/risk_alert_workflow.gif" alt="Animated ML Workflow" width="90%">
+</p>
 
+End-to-End Pipeline
 
-The animation represents the same major stages implemented in the notebook: data preparation, class balancing, model comparison, hyperparameter tuning and final evaluation.
+<p align="center">
+  <img src="assets/ml_pipeline.png" alt="Machine Learning Pipeline" width="100%">
+</p>
 
-📌 About the Project
+📊 Dataset
 
-This project builds a Risk Alert Classifier using supervised machine learning.
+<p align="center">
+  <img src="assets/dataset_snapshot.png" alt="Dataset Snapshot" width="90%">
+</p>
 
-The notebook uses the target column:
+The project uses:
+
+Risk_Alert_Classifier_Dataset_4600.csv.csv
+
+Dataset Size
+
+Item
+
+Value
+
+Total records
+
+4,600
+
+Training records
+
+3,680
+
+Testing records
+
+920
+
+Original input columns
+
+18
+
+Feature columns after encoding
+
+113
+
+Target
 
 risk_status
 
-The objective is to classify customers into risk categories and compare multiple classification approaches.
+Main Features
 
-A key business objective is to minimize False Negatives, because a False Negative means a genuinely high-risk customer is classified as low-risk.
+The dataset contains customer information such as:
 
-🧠 Project Pipeline
+Age
 
+Gender
 
+Region
 
-Main workflow
+Employment type
 
-Load the Risk Alert Classifier dataset
+Annual income
 
-Separate features and target
+Credit score
 
-Convert categorical features using one-hot encoding
+Credit utilization ratio
 
-Split data into training and testing sets
+Missed payments
 
-Handle missing values using KNNImputer
+Average late-payment days
 
-Standardize features using StandardScaler
+Monthly transaction count
 
-Train a Logistic Regression baseline
+Monthly spending
 
-Test class-balancing techniques
+Cash advances
 
-Compare Decision Tree and Random Forest
+Complaints
 
-Tune Random Forest using Grid Search and Randomized Search
+Failed login attempts
 
-Compare ROC/AUC and False Negatives
+Account tenure
 
-Select the final model based on the project objective
+Last transaction date
 
-🗂️ Dataset & Target
-
-The notebook loads:
-
-df = pd.read_csv("Risk_Alert_Classifier_Dataset_4600.csv.csv")
-
-Target:
-
-y = df["risk_status"]
-
-Features:
-
-X = df.drop("risk_status", axis=1)
-
-Categorical variables are converted with:
-
-X = pd.get_dummies(X, drop_first=True)
+Debt balance
 
 🧹 Data Preprocessing
 
+The project applies the following preprocessing steps.
 
+1. Target & Feature Separation
 
-The notebook performs:
+y = df["risk_status"]
+X = df.drop("risk_status", axis=1)
 
-1. Train/Test Split
+2. Categorical Encoding
 
-train_test_split(
+X = pd.get_dummies(X, drop_first=True)
+
+3. Train/Test Split
+
+X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
     test_size=0.20,
@@ -92,21 +194,27 @@ train_test_split(
     stratify=y
 )
 
-2. Missing Value Imputation
+4. Missing Value Handling
+
+Missing values are handled using:
 
 KNNImputer(n_neighbors=5)
 
-3. Feature Scaling
+5. Feature Scaling
 
 StandardScaler()
 
-The preprocessing is fitted on the training data and then applied to the test data.
+This produces a clean numerical feature matrix for the classification models.
 
-⚖️ Handling Class Imbalance
+⚖️ Class Imbalance Handling
 
+The training data is imbalanced, with approximately:
 
+87.88% → Class 0
 
-The notebook compares the baseline model with:
+12.12% → Class 1
+
+To investigate the effect of imbalance, the notebook compares:
 
 Random Under Sampling
 
@@ -116,47 +224,82 @@ SMOTE
 
 ADASYN
 
-Example:
+<p align="center">
+  <img src="assets/sampling_comparison_actual.png" alt="Actual Sampling Comparison" width="90%">
+</p>
 
-methods = {
-    "Under": RandomUnderSampler(random_state=42),
-    "Over": RandomOverSampler(random_state=42),
-    "SMOTE": SMOTE(random_state=42),
-    "ADASYN": ADASYN(random_state=42)
-}
+Actual Notebook Results
 
-The comparison focuses on:
+Method
 
 Recall
 
-F1 Score
+F1
 
 AUC-ROC
 
+Baseline
+
+1.000
+
+1.000
+
+1.000
+
+Under
+
+1.000
+
+0.974
+
+1.000
+
+Over
+
+1.000
+
+0.991
+
+1.000
+
+SMOTE
+
+1.000
+
+0.996
+
+1.000
+
+ADASYN
+
+1.000
+
+1.000
+
+1.000
+
 🤖 Machine Learning Models
 
+1. Logistic Regression
 
-
-Logistic Regression
-
-Used as the baseline classification model.
+Used as the baseline classifier:
 
 LogisticRegression(max_iter=1000)
 
-Decision Tree
+2. Decision Tree
 
 DecisionTreeClassifier(random_state=42)
 
-Random Forest
+3. Random Forest
 
 RandomForestClassifier(
     n_estimators=100,
     random_state=42
 )
 
-Tuned Random Forest
+4. Tuned Random Forest
 
-Random Forest is further optimized using:
+The Random Forest model is optimized using:
 
 RandomizedSearchCV
 
@@ -166,9 +309,9 @@ GridSearchCV
 
 F1 scoring
 
-🔍 Hyperparameter Tuning
+🔧 Hyperparameter Tuning
 
-The notebook searches over:
+The search space is:
 
 params = {
     "n_estimators": [50, 100, 200],
@@ -176,143 +319,184 @@ params = {
     "min_samples_split": [2, 5]
 }
 
-Two tuning strategies are used:
+Best Randomized Search Parameters
 
-Randomized Search
+n_estimators = 200
+max_depth = 10
+min_samples_split = 2
 
-RandomizedSearchCV(
-    RandomForestClassifier(random_state=42),
-    params,
-    n_iter=5,
-    cv=5,
-    scoring="f1",
-    random_state=42
-)
+Best Grid Search Parameters
 
-Grid Search
+n_estimators = 200
+max_depth = None
+min_samples_split = 5
 
-GridSearchCV(
-    RandomForestClassifier(random_state=42),
-    params,
-    cv=5,
-    scoring="f1"
-)
+<p align="center">
+  <img src="assets/tuning_actual.png" alt="Random Forest Tuning Results" width="80%">
+</p>
 
-📊 Evaluation Metrics
+Accuracy Improvement
 
+Untuned Random Forest : 0.9967
+Tuned Random Forest   : 0.9978
 
+📈 Model Evaluation
 
-The project evaluates classification performance using:
-
-Metric
-
-Purpose
+The project evaluates each model using:
 
 Accuracy
 
-Overall correct predictions
-
 Recall
-
-Ability to identify positive/high-risk cases
 
 F1 Score
 
-Balance between precision and recall
-
 AUC-ROC
-
-Model discrimination ability
 
 False Positive
 
-Low-risk predicted as high-risk
-
 False Negative
 
-High-risk predicted as low-risk
+ROC Curve
 
-Why False Negatives are important
+<p align="center">
+  <img src="assets/roc_curve_actual.png" alt="Actual ROC Curve from Notebook" width="80%">
+</p>
 
-In this project, the final model is selected using the minimum number of False Negatives.
+Confusion Matrices
 
-A False Negative can represent a high-risk customer incorrectly classified as low-risk, which may create financial and credit-risk consequences.
+<p align="center">
+  <img src="assets/confusion_matrices_actual.png" alt="Actual Confusion Matrices" width="100%">
+</p>
 
-🎯 Confusion Matrix
+🏆 Final Results
 
+<p align="center">
+  <img src="assets/model_comparison_actual.png" alt="Actual Model Comparison" width="95%">
+</p>
 
+Model
 
-The notebook extracts:
+Accuracy
 
-TN, FP, FN, TP
+Recall
 
-and explicitly evaluates:
+F1 Score
 
-Type I Error → False Positive
+AUC-ROC
 
-Type II Error → False Negative
+False Positive
 
-📈 ROC & AUC
-
-
-
-The notebook generates ROC curves for:
+False Negative
 
 Logistic Regression
 
+1.000
+
+1.000
+
+1.000
+
+1.000
+
+0
+
+0
+
 Decision Tree
+
+0.968
+
+0.865
+
+0.869
+
+0.924
+
+14
+
+15
 
 Random Forest
 
+0.997
+
+0.973
+
+0.986
+
+1.000
+
+0
+
+3
+
 Tuned Random Forest
 
-AUC-ROC is calculated using:
+0.998
 
-roc_auc_score(y_test, prob)
+0.982
 
-and the ROC curve is generated with:
+0.991
 
-roc_curve(y_test, prob)
+1.000
 
-🏆 Final Model Selection
+0
 
-The final comparison includes:
+2
 
-Model
-Accuracy
-Recall
-F1 Score
-AUC-ROC
-False Positive
-False Negative
+🥇 Best Model
 
-The notebook selects the final model using:
+Logistic Regression
+
+According to the notebook's final selection logic:
 
 best_row = final_df.loc[
     final_df["False Negative"].idxmin()
 ]
 
-Business recommendation
+The selected model is:
 
-The project prioritizes the model with the lowest False Negative count, because missing a genuinely high-risk customer is considered more costly than incorrectly flagging a low-risk customer.
+Logistic Regression
 
-Note: Exact accuracy, recall, F1, AUC and False Negative values should be taken from the actual notebook execution output rather than hard-coded into this README.
+Why?
 
-🛠️ Technologies Used
+Metric
 
-Python
+Result
 
-Pandas
+Accuracy
 
-Scikit-learn
+1.000
 
-imbalanced-learn
+Recall
 
-NumPy
+1.000
 
-Matplotlib
+F1 Score
 
-Jupyter Notebook
+1.000
+
+AUC-ROC
+
+1.000
+
+False Positive
+
+0
+
+False Negative
+
+0
+
+The tuned Random Forest achieved slightly higher model complexity and 0.9978 accuracy, but it still produced 2 False Negatives. Since this project prioritizes minimizing False Negatives, Logistic Regression is selected as the final model.
+
+💡 Business Recommendation
+
+For this project, the preferred model is Logistic Regression because it produces zero False Negatives on the notebook's test results.
+
+This means no high-risk customer in the test set was classified as low-risk.
+
+Important: These metrics describe the results stored in the supplied notebook and should be interpreted as notebook/test-set results, not as a guarantee of future production performance.
 
 📁 Project Structure
 
@@ -323,54 +507,62 @@ Risk-Alert-Classifier/
 ├── README.md
 │
 └── assets/
-    ├── 01_project_overview.png
-    ├── 02_data_preprocessing.png
-    ├── 03_sampling_methods.png
-    ├── 04_models_used.png
-    ├── 05_evaluation_metrics.png
-    ├── 06_roc_auc.png
-    ├── 07_confusion_matrix.png
-    └── risk_alert_ml_workflow.gif
+    ├── hero_risk_alert.png
+    ├── ml_pipeline.png
+    ├── dataset_snapshot.png
+    ├── sampling_comparison_actual.png
+    ├── model_comparison_actual.png
+    ├── confusion_matrices_actual.png
+    ├── tuning_actual.png
+    ├── roc_curve_actual.png
+    └── risk_alert_workflow.gif
 
-▶️ How to Run
+⚙️ Installation & Usage
 
 1. Clone the repository
 
 git clone YOUR_GITHUB_REPOSITORY_URL
+cd Risk-Alert-Classifier
 
 2. Install dependencies
 
-pip install pandas scikit-learn imbalanced-learn matplotlib
+pip install pandas numpy scikit-learn imbalanced-learn matplotlib jupyter
 
-3. Open the notebook
+3. Start Jupyter Notebook
 
-jupyter notebook project3.ipynb
+jupyter notebook
 
-4. Keep the dataset in the same project folder
+4. Open
 
-Make sure the CSV filename matches the filename used in the notebook:
+project3.ipynb
+
+5. Keep the dataset in the project directory
 
 Risk_Alert_Classifier_Dataset_4600.csv.csv
 
-5. Run all notebook cells
+Run the notebook cells from top to bottom.
 
-Execute the notebook from top to bottom to generate the actual model results.
+🧠 Key Learnings
 
-📌 Key Learning Outcomes
+This project demonstrates practical knowledge of:
 
-Through this project, the following machine learning concepts are demonstrated:
+Supervised machine learning
+
+Binary classification
 
 Data preprocessing
 
-Categorical encoding
+One-hot encoding
 
-KNN-based missing-value imputation
+KNN imputation
 
-Feature scaling
+Standardization
 
 Train/test splitting
 
-Class imbalance handling
+Stratified sampling
+
+Class imbalance
 
 Random Under Sampling
 
@@ -386,15 +578,13 @@ Decision Tree
 
 Random Forest
 
-Hyperparameter tuning
+Randomized Search
 
 Grid Search
 
-Randomized Search
+Cross-validation
 
-ROC curve
-
-AUC-ROC
+ROC/AUC analysis
 
 Confusion matrix
 
@@ -402,34 +592,48 @@ Recall and F1 Score
 
 False Positive / False Negative analysis
 
-Business-oriented model selection
+Business-driven model selection
 
 🚀 Future Improvements
 
-Add feature importance visualization
+Add feature-importance analysis
 
-Compare additional classifiers such as XGBoost
+Add SHAP explainability
 
-Add probability-based risk categories
+Test XGBoost / Gradient Boosting
 
-Build a Streamlit web application
+Build a Streamlit prediction interface
 
-Add model explainability using SHAP
+Add probability-based risk scoring
 
-Save the trained model with Joblib
+Save the final model using Joblib
 
-Create an API for real-time risk prediction
+Create an API for real-time predictions
+
+Perform external validation on unseen datasets
 
 Add automated model monitoring
 
-👨‍💻 Project Focus
+👨‍💻 Project Type
 
-Risk Alert Classification using Machine Learning
+Machine Learning • Data Science • Credit Risk Classification
 
-The main principle of this project is:
+Tech Stack
 
-A good classification model is not selected only by accuracy; it should match the actual business cost of prediction errors.
+Python
+│
+├── Pandas
+├── NumPy
+├── Scikit-learn
+├── imbalanced-learn
+└── Matplotlib
 
-For this project, minimizing False Negatives is the primary decision criterion.
+⭐ Project Summary
 
-⭐ If you find this project useful, consider giving the repository a star!
+Risk Alert Classifier demonstrates how machine learning can be used for credit-risk classification while considering the real-world cost of prediction errors.
+
+The project goes beyond simply comparing accuracy by examining Recall, F1, AUC-ROC and False Negatives and ultimately selects the model that best matches the stated business requirement.
+
+<p align="center">
+  ⭐ If you found this project useful, consider giving the repository a star!
+</p>
